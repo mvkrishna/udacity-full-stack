@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Catolog app</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/font-awesome-4.3.0/css/font-awesome.min.css">
+    <link href="static/override.css" rel="stylesheet">
+
+    <script src="static/jquery-1.11.3.min.js"></script>
+    <script src="static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
+    <script>
+        function signInCallback(authResult) {
+            if (authResult['code']) {
+                // Hide the sign-in button now that the user is authorized
+                //$('#signinButton').attr('style', 'display: none');
+                // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
+                $.ajax({
+                    type: 'POST',
+                    url: '/gconnect?state={{STATE}}',
+                    processData: false,
+                    data: authResult['code'],
+                    contentType: 'application/octet-stream; charset=utf-8',
+                    success: function(result) {
+                        // Handle or verify the server response if necessary.
+                        if (result) {
+                            $('#result').html('Login Successful!</br>' + result + '</br>Redirecting...')
+                            setTimeout(function() {
+                                window.location.href = "/";
+                            }, 3000);
+
+                        } else if (authResult['error']) {
+                            console.log('There was an error: ' + authResult['error']);
+                        } else {
+                            $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                        }
+                    }
+
+                });
+            }
+        }
+    </script>
+    </script>
+</head>
+
+<body>
+
+    <!-- Static navbar -->
+    <nav class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/"> <i class="fa fa-list">  Catalog App</i>
+                </a>
+            </div>
+            <!-- <button type="button" class="btn btn-default navbar-btn pull-right"><i class="fa fa-sign-in">  Sign in</i></button> -->
+
+            {% if logged_in == True%}
+            <a href="/signout" type="button" class="btn btn-default navbar-btn pull-right"><i class="fa fa-sign-out"> Logout</i></a> {% else %}
+            <div id="signinButton" class="btn btn-default navbar-btn pull-right">
+                <span class="g-signin" data-scope="openid" data-clientid="167035963102-rhla6r22jt124fhh96m8f70k8l1u96b2.apps.googleusercontent.com" data-redirecturi="postmessage" data-addesstype="offline" data-cookiepolicy="single_host_origin" data-callback="signInCallback" data-approvalprompt="force">
+  <i class="fa fa-sign-in"> Login</i>
+</span>
+            </div>
+            {% endif %}
+
+
+    </nav>
+
+
+
+    <!--main-->
+    <div class="container">
+        <div class="row">
+            <!--left-->
+            <div class="col-md-3" id="leftCol">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Categories </h4>
+                    </div>
+
+                    <ul class="nav nav-stacked" id="sidebar">
+                        {% for category in categories %}
+                        <li><a href={{url_for( 'items', category_name=category.name)}}>{{category.name}}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <!--/left-->
+
+            <!--right-->
+            <div class="col-md-9">
+                <div class="row">
+                    {% with messages = get_flashed_messages() %} {% if messages %}
+                    <ul class=flashes>
+                        {% for message in messages %}
+                        <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %} {% endwith %}
+                    <h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Latest Items
+                {% if logged_in ==  True%}
+                <a href={{url_for('edit_item', category_name = "Soccer", item_name = "new", item_id = 1)}} class="pull-right" href=#><i class="fa fa-plus"> Add Item &nbsp;&nbsp;</i> </a>
+                {% endif %}
+
+                </h4> {% for item in latest_items %}
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <a href={{url_for( 'item', category_name=item.category.name, item_name=item.name)}}>
+                                <div class="panel-heading">
+                                    <h4>{{item.name}}</h4>
+                                </div>
+                                <div class="panel-body panel-height">
+                                    <div class="col-md-5">
+                                        <img src="{{url_for('getImage', item_id = item.id)}}" height=120 width=120 class="img-responsive" onError="this.onerror=null;this.src='http://place-hold.it/120x120&text=No%20Image';">
+                                    </div>
+                                    <div class="col-md-7">
+                                        {{item.description}}
+                                    </div>
+                                </div>
+                                <div class="panel-footer">{{item.category.name}}</div>
+
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+                <!--/right-->
+            </div>
+            <!--/row-->
+        </div>
+        <!--/container-->
+        <!-- Bootstrap core JavaScript
+    ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+
+
+
+</body>
+
+</html>

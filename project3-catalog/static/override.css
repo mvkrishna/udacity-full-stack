@@ -1,0 +1,19 @@
+.panel-height {
+       min-height: 150px;
+       max-height: 150px;
+       overflow: hidden;
+       padding-bottom: 30px;
+}
+.panel a{
+  color:white;
+  text-decoration: none;
+}
+.panel ul a {
+  color:rgb(223, 105, 26);;
+  text-decoration: none;
+}
+
+.panel-heading {
+  background-color: #485563;
+  color: #ebebeb;
+}

@@ -1,0 +1,11 @@
+--------------------------------------------
+Steps to run the application
+--------------------------------------------
+- Required files before running the app
+  * entertainment_center.py
+  * fresh_tomatoes.py
+  * media.py
+- Run the app in the terminal using the below command
+  * python entertainment_center.py
+- Required generated file after running the app
+  * fresh_tomatoes.html
