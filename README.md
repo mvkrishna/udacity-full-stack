@@ -13,3 +13,7 @@ List of projects
   * project3-catalog
   * project4-conference-central
   * project5-linux-configuration
+
+Certificate
+----------------------
+![image](certificate.png)
